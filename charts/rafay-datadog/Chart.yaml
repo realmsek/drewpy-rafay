@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: "2"
+description: Send Rafay Audit logs to Datadog
+name: rafay-datadog
+type: application
+version: 0.2.0

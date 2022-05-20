@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-auditlogs-ts-configmap
+  labels:
+    {{- include "rafay-splunk.labels" . | nindent 4 }}
+data:
+  auditLogs_ts: |-
