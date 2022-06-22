@@ -1,0 +1,21 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sVolumeTypes
+metadata:
+  name: allowed-volume-types
+spec:
+  match:
+    kinds:
+      - apiGroups:
+          - ""
+        kinds:
+          - "Pod"
+    excludedNamespaces:
+      - "kube-system"
+      - "rafay-infra"
+      - "rafay-system"
+  parameters:
+    volumes:
+      - "configMap"
+      - "emptyDir"
+      - "secret"
+      - "persistentVolumeClaim"

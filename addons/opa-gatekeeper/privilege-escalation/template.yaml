@@ -1,0 +1,40 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sprivilegeescalation
+  annotations:
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPrivilegeEscalation
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sprivilegeescalation
+        
+        has_field(object, field) = true {
+            object[field]
+        }
+        
+        input_allow_privilege_escalation(c) {
+            not has_field(c, "securityContext")
+        }
+        
+        input_allow_privilege_escalation(c) {
+            not c.securityContext.allowPrivilegeEscalation == false
+        }
+        
+        input_containers[c] {
+            c := input.review.object.spec.containers[_]
+        }
+        
+        input_containers[c] {
+            c := input.review.object.spec.initContainers[_]
+        }
+        
+        violation[{"msg": msg, "details": {}}] {
+            c := input_containers[_]
+            input_allow_privilege_escalation(c)
+            msg := sprintf("Privilege escalation container is not allowed: %v", [c.name])
+        }

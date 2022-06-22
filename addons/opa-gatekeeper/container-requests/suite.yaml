@@ -1,0 +1,19 @@
+apiVersion: test.gatekeeper.sh/v1alpha1
+kind: Suite
+tests:
+  - name: container-requests
+    template: template.yaml
+    constraint: constraint.yaml
+    cases:
+      - name: no-requests
+        object: cases/no-requests.yaml
+        assertions:
+          - violations: yes
+      - name: no-resources
+        object: cases/no-resources.yaml
+        assertions:
+          - violations: yes
+      - name: with-requests
+        object: cases/with-requests.yaml
+        assertions:
+          - violations: no

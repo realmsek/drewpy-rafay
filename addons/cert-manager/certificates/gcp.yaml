@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-server-certificate
+spec:
+  dnsNames:
+    - "*.gcp.rafay.us"
+  issuerRef:
+    kind: ClusterIssuer
+    group: cert-manager.io
+    name: letsencrypt-production
+  secretName: wildcard-server-certificate

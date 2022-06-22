@@ -1,0 +1,11 @@
+aws:
+  zoneType: public
+domainFilters:
+  - aws.rafay.us
+policy: sync
+provider: aws
+registry: txt
+sources:
+  - ingress
+  - service
+txtOwnerId: {{{ .global.Rafay.ClusterName }}}

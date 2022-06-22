@@ -1,0 +1,120 @@
+controller:
+  config:
+    entries:
+      proxy-protocol: "true"
+      real-ip-header: "proxy_protocol"
+      resolver-addresses: "8.8.8.8"
+      set-real-ip-from: "172.16.0.0/16"
+    name: nginx-config
+  customPorts:
+    - name: dashboard
+      containerPort: 8080
+  defaultTLS:
+    secret: nginx-ingress/default-server-secret
+  enableCustomResources: true
+  enablePreviewPolicies: true
+  enableSnippets: true
+  healthStatus: true
+  healthStatusURI: "/nginx-health"
+  hostNetwork: false
+  image:
+    pullPolicy: IfNotPresent
+    repository: registry.rafay.us/nginx-plus-ingress
+    tag: "2.1.1"
+  ingressClass: nginx
+  initContainers:
+    - name: init
+      image: rafayus/init:latest
+      command: ["/bin/sh", "-c", "/bin/sh /tmp/script.sh"]
+      env:
+        - name: CLUSTER_NAME
+          value: rafay-presales-aws-us-west-2
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: RCTL_PROJECT
+          value: aws
+  kind: deployment
+  logLevel: 1
+  name: nginx-plus-ingress
+  nginxplus: true
+  nginxReloadTimeout: 4000
+  nginxStatus:
+    allowCidrs: 0.0.0.0/0
+    enable: true
+    port: 8080
+  pod:
+    annotations:
+      rafay.dev/secretstore: vault
+      vault.secretstore.rafay.dev/role: aws
+      vault.secretstore.rafay.dev/filesecret-config-1: |
+        {
+          "containers": ["init"],
+          "secretFileName": "script.sh",
+          "vaultSecretRef": "bootstrap/nginx-ingress#script",
+          "volumeMountPath": "/tmp"
+        }
+      vault.secretstore.rafay.dev/filesecret-config-2: |
+        {
+          "outputFormat": "json",
+          "secretFileName": "rafay.json",
+          "vaultSecretRef": "secrets/rafay/api",
+          "volumeMountPath": "/tmp"
+        }
+      vault.secretstore.rafay.dev/filesecret-config-3: |
+        {
+          "outputFormat": "json",
+          "secretFileName": "registry.rafay.us.json",
+          "vaultSecretRef": "secrets/registry/registry.rafay.us",
+          "volumeMountPath": "/tmp"
+        }
+      vault.secretstore.rafay.dev/filesecret-config-4: |
+        {
+          "outputFormat": "json",
+          "secretFileName": "demo.rafay.us.json",
+          "vaultSecretRef": "tls/demo.rafay.us",
+          "volumeMountPath": "/tmp"
+        }
+  replicaCount: 1
+  reportIngressStatus:
+    externalService: nginx-ingress
+    leaderElectionLockName: "nginx-ingress-leader-election"
+  service:
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: "nginx.us-west-2.aws.rafay.us"
+      service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "Group=Rafay Presales,Owner=Matt"
+      service.beta.kubernetes.io/aws-load-balancer-attributes: "load_balancing.cross_zone.enabled=false"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "ssl"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: "/nginx-health"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "80"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "10"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout: "5"
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "2"
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+      service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    create: true
+    externalTrafficPolicy: Local
+    httpPort:
+      enable: false
+      port: 80
+      targetPort: 80
+    httpsPort:
+      enable: true
+      port: 443
+      targetPort: 443
+    name: nginx-ingress
+    type: LoadBalancer
+  serviceAccount:
+    name: nginx-ingress
+    imagePullSecretName: "registry.rafay.us"
+  setAsDefaultIngress: true
+  terminationGracePeriodSeconds: 0
+  wildcardTLS:
+    secret: nginx-ingress/wildcard-server-secret
+
+prometheus:
+  create: false

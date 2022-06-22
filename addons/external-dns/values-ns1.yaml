@@ -1,0 +1,16 @@
+domainFilters:
+  - demo.rafay.us
+extraEnvVars:
+  - name: NS1_APIKEY
+    value: 1NBXJ6h9XzeeLXjUXzci
+ns1:
+  minTTL: 300
+policy: sync
+provider: ns1
+registry: txt
+sources:
+  - ingress
+  - service
+txtOwnerId: {{{ .global.Rafay.ClusterName }}}
+
+

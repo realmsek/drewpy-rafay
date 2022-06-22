@@ -1,0 +1,19 @@
+apiVersion: test.gatekeeper.sh/v1alpha1
+kind: Suite
+tests:
+  - name: container-limits
+    template: template.yaml
+    constraint: constraint.yaml
+    cases:
+      - name: no-limits
+        object: cases/no-limits.yaml
+        assertions:
+          - violations: yes
+      - name: no-resources
+        object: cases/no-resources.yaml
+        assertions:
+          - violations: yes
+      - name: with-limits
+        object: cases/with-limits.yaml
+        assertions:
+          - violations: no

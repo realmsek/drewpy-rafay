@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  annotations:
+    rafay.dev/registry-248j9vm: rafay-us-private
+    rafay.dev/registry-ko7e3y2: rafay-us-private
+    rafay.dev/registry-k6z33pm: rafay-us-private
+  labels:
+    app.kubernetes.io/name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: docker.io/kryshakm/nginx-demo:latest
+      imagePullPolicy: Always
+      ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+      securityContext:
+        allowPrivilegeEscalation: true
+  terminationGracePeriodSeconds: 0

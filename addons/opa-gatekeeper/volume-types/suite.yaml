@@ -1,0 +1,15 @@
+apiVersion: test.gatekeeper.sh/v1alpha1
+kind: Suite
+tests:
+  - name: volume-types
+    template: template.yaml
+    constraint: constraint.yaml
+    cases:
+      - name: host-path
+        object: cases/host-path.yaml
+        assertions:
+          - violations: yes
+      - name: persistent-volume-claim
+        object: cases/persistent-volume-claim.yaml
+        assertions:
+          - violations: no

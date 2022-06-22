@@ -1,0 +1,18 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sContainerRegistries
+metadata:
+  name: trusted-container-registries
+spec:
+  match:
+    kinds:
+      - apiGroups:
+          - ""
+        kinds:
+          - "Pod"
+    excludedNamespaces:
+      - "kube-system"
+      - "rafay-infra"
+      - "rafay-system"
+  parameters:
+    repos:
+      - "registry.rafay.us"

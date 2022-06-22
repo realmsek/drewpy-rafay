@@ -1,0 +1,14 @@
+domainFilters:
+  - gcp.rafay.us
+extraArgs:
+  google-zone-visibility: public
+policy: sync
+provider: google
+registry: txt
+serviceAccount:
+  annotations:
+    iam.gke.io/gcp-service-account: external-dns@presales-327417.iam.gserviceaccount.com
+sources:
+  - ingress
+  - service
+txtOwnerId: {{{ .global.Rafay.ClusterName }}}

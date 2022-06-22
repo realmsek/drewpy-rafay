@@ -1,0 +1,3 @@
+rbac:
+  serviceAccount:
+    name: csi-secrets-store-provider-aws

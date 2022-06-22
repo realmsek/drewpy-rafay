@@ -1,0 +1,15 @@
+apiVersion: test.gatekeeper.sh/v1alpha1
+kind: Suite
+tests:
+  - name: container-registries
+    template: template.yaml
+    constraint: constraint.yaml
+    cases:
+      - name: trusted-registry
+        object: cases/trusted-registry.yaml
+        assertions:
+          - violations: no
+      - name: unstrusted-registry
+        object: cases/untrusted-registry.yaml
+        assertions:
+          - violations: yes

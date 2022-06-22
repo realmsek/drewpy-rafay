@@ -1,0 +1,15 @@
+apiVersion: test.gatekeeper.sh/v1alpha1
+kind: Suite
+tests:
+  - name: privilege-escalation
+    template: template.yaml
+    constraint: constraint.yaml
+    cases:
+      - name: privilege-escalation-disabled
+        object: cases/privilege-escalation-disabled.yaml
+        assertions:
+          - violations: no
+      - name: privilege-escalation-enabled
+        object: cases/privilege-escalation-enabled.yaml
+        assertions:
+          - violations: yes

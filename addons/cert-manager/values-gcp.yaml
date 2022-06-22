@@ -1,0 +1,6 @@
+installCRDs: true
+serviceAccount:
+  annotations:
+    iam.gke.io/gcp-service-account: cert-manager@presales-327417.iam.gserviceaccount.com
+startupapicheck:
+  enabled: false
